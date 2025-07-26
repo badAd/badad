@@ -1,0 +1,19 @@
+RewriteEngine on
+Options -Indexes +FollowSymLinks
+
+# Errors
+#ErrorDocument 400 /400.php # Bad Request
+#ErrorDocument 401 /401.php # Unauthorized
+#ErrorDocument 403 /403.php # Forbidden
+#ErrorDocument 404 /404.php # Not Found
+#ErrorDocument 500 /500.php # Server Error
+
+# Example
+#RewriteRule ^index\.txt?$ index.php
+
+# badAd rewrites
+RewriteRule ^/?([a-zA-Z0-9_/-]+)(.*/)?$ render.php?s=$1 [L] # feed
+#RewriteRule ^/?([a-zA-Z0-9]+)\.mp3$ /audio.php?a=$1 [L] # audio
+#RewriteRule ^/?([a-zA-Z0-9]+)/audio\.mp3$ /audio_user.php?a=$1 [L] # audio from logged in user
+RewriteRule ^badad-([a-zA-Z0-9]+)\.mp3$ /audio.php?a=$1 [L] # audio
+RewriteRule ^audio/badad-([a-zA-Z0-9]+)\.mp3$ /audio_user.php?a=$1 [L] # audio from logged in user

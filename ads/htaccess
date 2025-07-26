@@ -1,0 +1,15 @@
+RewriteEngine on
+
+# Errors
+#ErrorDocument 400 /400.php # Bad Request
+#ErrorDocument 401 /401.php # Unauthorized
+#ErrorDocument 403 /403.php # Forbidden
+#ErrorDocument 404 /404.php # Not Found
+#ErrorDocument 500 /500.php # Server Error
+
+# Contact Redirect
+RewriteRule ^/?([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/ct\.html$ /ct.php?l=$1&p=$2 [L]
+
+# JavaScript embed file
+RewriteRule ^/?([a-zA-Z0-9]+)/ads\.js$ /render_listed_ad.php?l=$1 [L]
+RewriteRule ^/?([a-zA-Z0-9]+)/adn\.js$ /render_listed_ad_nocount.php?l=$1 [L]

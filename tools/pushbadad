@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+classuser="root"
+classip="149.28.86.23"
+classport="1543"
+classdir="/srv/www/badad"
+
+# Prep the sync
+rm -rf "{$classdir}"/tools/webdir
+cp -r "{$classdir}"/webdir "{$classdir}"/tools/
+rm -rf "{$classdir}"/tools/webdir/stripe-php
+
+
+# Copy the files
+scp -P {$classport} -rp "{$classdir}"/tools/webdir/* {$classuser}@{$classip}:~/class/webdir/
+
+# Echo a message
+echo "All PDA files pushed."

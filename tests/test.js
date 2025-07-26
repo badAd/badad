@@ -1,0 +1,1 @@
+document.write("<div class=\"pd_ad\"><strong class=\"pd_ad\">$new_ad_heading</strong><br class=\"pd_ad\" />$new_ad_description<br class=\"pd_ad\" /><em class=\"pd_ad\">$new_ad_info</em><br class=\"pd_ad\" />$new_ad_pricing <a class=\"pd_ad\" href=\"$new_ad_contactURL\"><u class=\"pd_ad\">Contact</u></a></div>");
