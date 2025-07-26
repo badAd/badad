@@ -1,9 +1,9 @@
 <?php
 
 // Test
-//$stripePkey = 'KEYHERE';
-//$stripeSkey = 'KEYHERE';
+//$stripePkey = ''; // Paste public key here
+//$stripeSkey = ''; // Paste secret key here
 
 // Live
-$stripekey = 'KEYHERE';
-$stripetok = 'KEYHERE';
+$stripekey = ''; // Paste public key here
+$stripetok = ''; // Paste secret key here
