@@ -1,9 +1,9 @@
 <?php
 
 // Test
-//$stripePkey = 'pk_test_qKlRbbanNxrZDoSc8InUWqSe';
-//$stripeSkey = 'sk_test_4SKEl1x4bpMBCRZdHI7pVOLk';
+//$stripePkey = 'pk_test_someLongSecretKeyH3R3EEe';
+//$stripeSkey = 'sk_test_someLongSecretKeyH3R3EEe';
 
 // Live
-$stripekey = 'pk_live_TXWqy5mnDJyKXNQnvydf5v1w';
-$stripetok = 'sk_live_x1WHZ4CQm2iuYztNQyvsPeSL';
+$stripekey = 'pk_live_someLongSecretKeyH3R3EEe';
+$stripetok = 'sk_live_someLongSecretKeyH3R3EEe';
