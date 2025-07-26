@@ -1,9 +1,9 @@
 <?php
 
 // Test
-//$stripePkey = ''; // Paste public key here
-//$stripeSkey = ''; // Paste secret key here
+//$stripePkey = 'pk_test_someLongSecretKeyH3R3EEe';
+//$stripeSkey = 'sk_test_someLongSecretKeyH3R3EEe';
 
 // Live
-$stripekey = ''; // Paste public key here
-$stripetok = ''; // Paste secret key here
+$stripekey = 'pk_live_someLongSecretKeyH3R3EEe';
+$stripetok = 'sk_live_someLongSecretKeyH3R3EEe';

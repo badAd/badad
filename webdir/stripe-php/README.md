@@ -53,8 +53,8 @@ If you use Composer, these dependencies should be handled automatically. If you 
 Simple usage looks like:
 
 ```php
-\Stripe\Stripe::setApiKey('TEST_KEY_HERE');
-$charge = \Stripe\Charge::create(['amount' => 2000, 'currency' => 'usd', 'source' => 'tok_189fqt2eZvKYlo2CTGBeg6Uq']);
+\Stripe\Stripe::setApiKey('sk_test_someLongSecretKeyH3R3EEe');
+$charge = \Stripe\Charge::create(['amount' => 2000, 'currency' => 'usd', 'source' => 'tok_someLongSecretKeyH3R3EEe']);
 echo $charge;
 ```
 
