@@ -1,9 +1,9 @@
 <?php
 
 // Test
-//$stripePkey = 'pk_test_someLongSecretKeyH3R3EEe';
-//$stripeSkey = 'sk_test_someLongSecretKeyH3R3EEe';
+//$stripePkey = 'pk_test_KEYHERE';
+//$stripeSkey = 'sk_test_KEYHERE';
 
 // Live
-$stripekey = 'pk_live_someLongSecretKeyH3R3EEe';
-$stripetok = 'sk_live_someLongSecretKeyH3R3EEe';
+$stripekey = 'pk_live_KEYHERE';
+$stripetok = 'sk_live_KEYHERE';
