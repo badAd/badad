@@ -66,6 +66,11 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("/dash/site", s.editSite)
 	s.mux.HandleFunc("/dash/keys", s.keys)
 	s.mux.HandleFunc("/dash/security", s.security)
+	s.mux.HandleFunc("/dash/pay", s.dashPay)
+	s.mux.HandleFunc("/pay/return", s.payReturn)
+	s.mux.HandleFunc("/pay/stripe/webhook", s.payStripeWH)
+	s.mux.HandleFunc("/pay/paypal/webhook", s.payPaypalWH)
+	s.mux.HandleFunc("/pay/crypto", s.payCryptoNote)
 	s.mux.HandleFunc("/embed.js", s.embedJS)
 	s.mux.HandleFunc("/embed.json", s.embedJSON)
 	s.mux.HandleFunc("/api/pdt/keys", s.apiPdtKeys)
@@ -237,15 +242,27 @@ func (s *Server) editAd(w http.ResponseWriter, r *http.Request) {
 		if weeks < 1 {
 			weeks = 1
 		}
-		_, _ = s.pool.Exec(context.Background(),
-			`INSERT INTO ads(user_id,heading,body,info,rate,contact,category,weeks,expires_at)
-			 VALUES($1,$2,$3,$4,$5,$6,$7,$8,now()+ ($8 || ' weeks')::interval)`,
+		via := r.FormValue("pay_via")
+		if via == "" {
+			via = "invoice"
+		}
+		renew := r.FormValue("renew") == "1" && via != "crypto"
+		var adID int64
+		err := s.pool.QueryRow(context.Background(),
+			`INSERT INTO ads(user_id,heading,body,info,rate,contact,category,weeks,status,renew,pay_via)
+			 VALUES($1,$2,$3,$4,$5,$6,$7,$8,'pending',$9,$10) RETURNING id`,
 			u.ID, r.FormValue("heading"), r.FormValue("body"), r.FormValue("info"),
-			r.FormValue("rate"), r.FormValue("contact"), r.FormValue("category"), weeks)
-		http.Redirect(w, r, "/dash", http.StatusSeeOther)
+			r.FormValue("rate"), r.FormValue("contact"), r.FormValue("category"), weeks, renew, via).Scan(&adID)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		s.startAdPay(w, r, u.ID, adID, weeks, via, renew, u.Email)
 		return
 	}
-	s.render(w, "ad.html", s.page(r, "New ad"))
+	p := s.page(r, "New ad")
+	p["WeekPrice"] = fmt.Sprintf("%.2f", float64(s.weekPrice())/100)
+	s.render(w, "ad.html", p)
 }
 
 func (s *Server) editSite(w http.ResponseWriter, r *http.Request) {

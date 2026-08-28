@@ -1,0 +1,15 @@
+{{template "head" .}}
+<h1>Pay with crypto</h1>
+<p>Amount due <b>${{.Total}} USD</b> · order #{{.Order}}</p>
+<p class="hint">Prepaid. This run does not renew. Put the order number in the memo.</p>
+<ul>
+{{range .Coins}}
+<li><b>{{.Ticker}}</b> <code>{{.Address}}</code></li>
+{{else}}<li>SysAdmin has not set coin addresses yet.</li>{{end}}
+</ul>
+<form method="post" action="/pay/crypto">
+<input type="hidden" name="order" value="{{.Order}}">
+<p><label>Tx id / note <input name="txid"></label></p>
+<p><button>I’ve sent it</button></p>
+</form>
+{{template "foot" .}}

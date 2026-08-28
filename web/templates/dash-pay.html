@@ -1,0 +1,18 @@
+{{template "head" .}}
+<nav class="tabs">
+  <a href="/dash">Ads</a>
+  <a href="/dash/ad">New ad</a>
+  <a href="/dash/pay">Payments</a>
+</nav>
+<h1>Payments</h1>
+<p class="hint">Crypto never auto-renews. Confirm incoming crypto below if you are admin.</p>
+<ul>
+{{range .Orders}}
+<li>#{{.ID}} · {{.Email}} · ${{.Total}} · {{.Weeks}}w · {{.Via}} · {{.Status}} {{if .Renew}}renew{{else}}prepaid{{end}}
+{{if $.Admin}}{{if eq .Status "pending"}}{{if eq .Via "crypto"}}
+<form method="post" style="display:inline"><button name="confirm" value="{{.ID}}">Confirm</button></form>
+{{end}}{{end}}{{end}}
+</li>
+{{end}}
+</ul>
+{{template "foot" .}}

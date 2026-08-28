@@ -1,5 +1,6 @@
 {{template "head" .}}
 <h1>New classified</h1>
+<p class="hint">${{.WeekPrice}} per week. Stripe and PayPal can auto-renew each week. Crypto is prepaid and never renews.</p>
 <form method="post">
 <p><label>Heading <input name="heading" required></label></p>
 <p><label>Body<br><textarea name="body" rows="4"></textarea></label></p>
@@ -8,6 +9,15 @@
 <p><label>Contact <input name="contact"></label></p>
 <p><label>Category <input name="category" value="general"></label>
 <label>Weeks <input name="weeks" value="1" size="3"></label></p>
-<p><button>List it</button></p>
+<p><label>Pay
+  <select name="pay_via">
+    <option value="invoice">invoice</option>
+    <option value="stripe">Stripe</option>
+    <option value="paypal">PayPal</option>
+    <option value="crypto">crypto (prepaid, no renew)</option>
+  </select>
+</label></p>
+<p><label><input type="checkbox" name="renew" value="1"> auto-renew weekly (Stripe/PayPal only)</label></p>
+<p><button>Pay and list</button></p>
 </form>
 {{template "foot" .}}

@@ -24,3 +24,19 @@ db_pass=change-me
 
 mail_transport=off
 mail_from=noreply@badad.one
+
+# --- payments (same workflow as pdt-news) ---
+# Stripe / PayPal: one-time weeks OR auto-renewing subscription.
+# Crypto: prepaid weeks only. Never renews.
+# ad_week_cents=100
+# stripe_secret=
+# stripe_publishable=
+# paypal_client_id=
+# paypal_secret=
+# paypal_sandbox=false
+# wallet_dir=/etc/badad/wallet
+# btc=
+# eth=
+# sol=
+# xrp=
+
