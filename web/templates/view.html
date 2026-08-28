@@ -1,0 +1,9 @@
+{{template "head" .}}
+<article class="ad">
+  <h1>{{.Ad.Heading}}</h1>
+  <p>{{.Ad.Body}}</p>
+  {{if .Ad.Info}}<p>{{.Ad.Info}}</p>{{end}}
+  {{if .Ad.Rate}}<p>{{.Ad.Rate}}</p>{{end}}
+  {{if .Ad.Contact}}<p>{{.Ad.Contact}}</p>{{end}}
+</article>
+{{template "foot" .}}

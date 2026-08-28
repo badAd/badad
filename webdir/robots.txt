@@ -1,8 +1,0 @@
-User-agent:  * # Applies to all!
-Disallow: /includes/ # Don't scan the includes directory.
-Disallow: /inserts/
-Disallow: /css/
-Disallow: /js/
-Disallow: /images/
-Disallow: /stripe-php/
-Disallow: /

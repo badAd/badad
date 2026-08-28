@@ -1,0 +1,72 @@
+CREATE TABLE IF NOT EXISTS users (
+  id BIGSERIAL PRIMARY KEY,
+  login_id VARCHAR(64) NOT NULL UNIQUE,
+  email VARCHAR(160) NOT NULL UNIQUE,
+  pass_hash TEXT,
+  name TEXT NOT NULL DEFAULT '',
+  role TEXT NOT NULL DEFAULT 'user',
+  totp_secret TEXT,
+  totp_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+  pdt_user TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  token TEXT PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  expires TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS oauth_identities (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  provider TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  email TEXT,
+  UNIQUE (provider, subject)
+);
+
+CREATE TABLE IF NOT EXISTS ads (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  status TEXT NOT NULL DEFAULT 'live',
+  heading TEXT NOT NULL,
+  body TEXT NOT NULL DEFAULT '',
+  info TEXT NOT NULL DEFAULT '',
+  rate TEXT NOT NULL DEFAULT '',
+  contact TEXT NOT NULL DEFAULT '',
+  category TEXT NOT NULL DEFAULT 'general',
+  weeks INT NOT NULL DEFAULT 1,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS sites (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  name TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  serial TEXT NOT NULL UNIQUE,
+  n_ads INT NOT NULL DEFAULT 3,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS devkeys (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  domain TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'test',
+  test_pub TEXT,
+  test_sec TEXT,
+  live_pub TEXT,
+  live_sec TEXT,
+  pdt_managed BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS hits (
+  id BIGSERIAL PRIMARY KEY,
+  ad_id BIGINT REFERENCES ads(id),
+  kind TEXT NOT NULL,
+  at TIMESTAMPTZ NOT NULL DEFAULT now()
+);

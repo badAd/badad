@@ -1,0 +1,13 @@
+{{template "head" .}}
+<h1>New classified</h1>
+<form method="post">
+<p><label>Heading <input name="heading" required></label></p>
+<p><label>Body<br><textarea name="body" rows="4"></textarea></label></p>
+<p><label>Info <input name="info"></label></p>
+<p><label>Rate / price <input name="rate"></label></p>
+<p><label>Contact <input name="contact"></label></p>
+<p><label>Category <input name="category" value="general"></label>
+<label>Weeks <input name="weeks" value="1" size="3"></label></p>
+<p><button>List it</button></p>
+</form>
+{{template "foot" .}}

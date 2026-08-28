@@ -1,0 +1,10 @@
+{{template "head" .}}
+<h1>classified ads</h1>
+<p class="lede">Want-ads, suppliers, work — text, not banners.</p>
+{{range .Ads}}
+<article class="ad">
+  <h2><a href="/a/{{.ID}}">{{.Heading}}</a></h2>
+  <p>{{.Body}}</p>
+</article>
+{{else}}<p>No live ads yet.</p>{{end}}
+{{template "foot" .}}

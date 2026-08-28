@@ -1,0 +1,23 @@
+{{define "head"}}<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{.Title}} · badAd</title>
+<link rel="stylesheet" href="/static/css/badad.css">
+<link rel="icon" href="/static/favicon.png">
+</head><body>
+<header class="top">
+  <a class="logo" href="/">badAd</a>
+  <nav>
+    <a href="/">Home</a>
+    <a href="https://pdt.news">PDT</a>
+    {{if .User}}<a href="/dash">Dash</a><a href="/logout">Out</a>
+    {{else}}<a href="/login">Login</a><a href="/register">Register</a>{{end}}
+  </nav>
+</header>
+<main>
+{{end}}
+{{define "foot"}}
+</main>
+<p class="foot">Worldwide text ads from $1/wk · inherit-the-theme embed</p>
+</body></html>
+{{end}}

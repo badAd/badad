@@ -1,5 +1,0 @@
-ErrorDocument 400 /400.php # Bad Request
-ErrorDocument 401 /401.php # Unauthorized
-ErrorDocument 403 /403.php # Forbidden
-ErrorDocument 404 /404.php # Not Found
-ErrorDocument 500 /500.php # Server Error

@@ -1,0 +1,12 @@
+{{template "head" .}}
+<h1>Partner sites</h1>
+<form method="post"><p><label>Name <input name="name" required></label> <button>Add site</button></p></form>
+{{range .Sites}}
+<article class="ad">
+  <h2>{{.Name}}</h2>
+  <p>Serial <code>{{.Serial}}</code></p>
+  <pre>{{.Snippet}}</pre>
+  <p class="hint">The snippet inherits font and color from the host page.</p>
+</article>
+{{end}}
+{{template "foot" .}}

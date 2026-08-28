@@ -1,0 +1,9 @@
+{{template "head" .}}
+<h1>Security</h1>
+<p>Login ID <code>{{.User.LoginID}}</code></p>
+<p><a class="btn" href="/auth/google">Link Google</a>
+<a class="btn" href="/auth/apple">Link Apple</a>
+<a class="btn" href="/auth/github">Link GitHub</a>
+{{if .Pdt}}<a class="btn" href="/login/pdt">Link pdt</a>{{end}}</p>
+<p class="hint">Authenticator and passkeys stay available. After a social login, an Authenticator code is required if you turned it on.</p>
+{{template "foot" .}}

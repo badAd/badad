@@ -1,0 +1,17 @@
+{{template "head" .}}
+<h1>Sign in</h1>
+{{if .Err}}<p class="err">{{.Err}}</p>{{end}}
+<form method="post">
+<p><label>Login ID <input name="login_id" autocomplete="username"></label></p>
+<p><label>Password <input type="password" name="password"></label></p>
+<p><label>Authenticator <input name="totp" inputmode="numeric"></label></p>
+<p><button>Sign in</button></p>
+</form>
+<p class="hint">Google, Apple, GitHub, and Login with pdt. Authenticator and passkeys remain options.</p>
+<p>
+  <a class="btn" href="/auth/google">Google</a>
+  <a class="btn" href="/auth/apple">Apple</a>
+  <a class="btn" href="/auth/github">GitHub</a>
+  {{if .Pdt}}<a class="btn" href="/login/pdt">Login with pdt</a>{{end}}
+</p>
+{{template "foot" .}}

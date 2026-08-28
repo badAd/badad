@@ -1,0 +1,23 @@
+:root{--bg:#222;--ink:#eee;--mute:#aaa;--rule:#444;--accent:#c9a227}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",Arial,Helvetica,sans-serif;line-height:1.45}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.top{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1.2rem;border-bottom:2px solid var(--ink)}
+.logo{font-weight:700;color:var(--ink);letter-spacing:.04em}
+.top nav{display:flex;gap:1rem}
+main{max-width:42rem;margin:0 auto;padding:1.4rem 1rem 3rem}
+h1{font-family:"Source Serif Pro",Georgia,serif;font-weight:400}
+.lede{color:var(--mute)}
+.ad{border-top:1px solid var(--rule);padding:1rem 0}
+.ad h2{margin:.2rem 0;font-size:1.3rem}
+.err{color:#f88}
+.ok{color:#8d8}
+.hint{color:var(--mute);font-size:.9rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:1rem}
+.btn,button{background:var(--ink);color:var(--bg);border:0;padding:.35rem .7rem;font:inherit;cursor:pointer}
+.btn{display:inline-block}
+input,textarea{font:inherit;background:#111;color:var(--ink);border:1px solid var(--rule);padding:.3rem .45rem}
+pre{background:#111;padding:.6rem;overflow:auto;font-size:.85rem}
+.foot{text-align:center;color:var(--mute);font-size:.8rem;padding:1rem}
+.badad-slot,.badad-card{font:inherit;color:inherit}

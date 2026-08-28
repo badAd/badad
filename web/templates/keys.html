@@ -1,0 +1,12 @@
+{{template "head" .}}
+<h1>Developer keys</h1>
+{{if .Managed}}<p class="ok">Managed by a linked pdt-news account. Do not paste these into WordPress by hand.</p>{{end}}
+{{if .Pub}}
+<p>Live public <code>{{.Pub}}</code></p>
+{{if not .Managed}}<p>Live secret <code>{{.Sec}}</code></p>{{end}}
+{{end}}
+{{if not .Managed}}
+<form method="post"><button name="mint" value="1">Mint keys</button></form>
+{{end}}
+<p class="hint">Login with pdt auto-creates and syncs these.</p>
+{{template "foot" .}}

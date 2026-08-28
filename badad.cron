@@ -1,2 +1,0 @@
-47 0 * * * root /usr/bin/php /srv/www/badad/cron/weekly_epoch.php
-47 0 * * * root /usr/bin/php /srv/www/badad/cron/daily_key_del.php

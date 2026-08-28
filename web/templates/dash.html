@@ -1,0 +1,12 @@
+{{template "head" .}}
+<nav class="tabs">
+  <a href="/dash">Ads</a>
+  <a href="/dash/ad">New ad</a>
+  <a href="/dash/site">Partner sites</a>
+  <a href="/dash/keys">Dev keys</a>
+  <a href="/dash/security">Security</a>
+</nav>
+<h1>My ads</h1>
+<p class="hint">Signed in as login ID <code>{{.User.LoginID}}</code> (not public).</p>
+<ul>{{range .Ads}}<li>{{.Heading}} · {{.Status}}</li>{{else}}<li>None yet.</li>{{end}}</ul>
+{{template "foot" .}}

@@ -1,0 +1,11 @@
+{{template "head" .}}
+<h1>Register</h1>
+{{if .Err}}<p class="err">{{.Err}}</p>{{end}}
+<form method="post">
+<p><label>Login ID <input name="login_id" required></label></p>
+<p><label>Email <input type="email" name="email" required></label></p>
+<p><label>Name <input name="name"></label></p>
+<p><label>Password <input type="password" name="password"></label></p>
+<p><button>Create account</button></p>
+</form>
+{{template "foot" .}}

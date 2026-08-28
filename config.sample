@@ -1,0 +1,26 @@
+# badAd SysAdmin config. Live file: /etc/badad/config
+web_bind=127.0.0.1
+web_port=9003
+web_url=https://badad.one
+
+db_host=127.0.0.1
+db_port=5432
+db_name=badad
+db_user=badad
+db_pass=change-me
+
+# OAuth. Empty = off. Callback {web_url}/auth/{google|apple|github}/callback
+# oauth_google_id=
+# oauth_google_secret=
+# oauth_apple_id=
+# oauth_apple_secret=
+# oauth_github_id=
+# oauth_github_secret=
+
+# Login with pdt (pdt-news as OAuth provider)
+# pdt_url=https://example.tld
+# pdt_client_id=badad
+# pdt_client_secret=change-me
+
+mail_transport=off
+mail_from=noreply@badad.one

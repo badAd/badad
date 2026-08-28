@@ -1,2 +1,0 @@
-This came in handy once:
-sed -i 's?= $_GET\['\''p'\''\];?= preg_replace\("/\[^A-Za-z0-9-_\]/","", $_GET\['\''p'\''\]\);?' *.php
