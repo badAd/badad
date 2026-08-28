@@ -1,0 +1,10 @@
+{{template "head" .}}
+<h1>Contact</h1>
+{{if .Flash}}<p class="ok">{{.Flash}}</p>{{end}}
+<form method="post">
+<p><label>Name <input name="name" required></label></p>
+<p><label>Email <input type="email" name="email" required></label></p>
+<p><label>Message<br><textarea name="message" rows="6" required></textarea></label></p>
+<p><button>Send</button></p>
+</form>
+{{template "foot" .}}

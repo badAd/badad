@@ -20,6 +20,7 @@ type Config struct {
 	PaypalSandbox                          bool
 	WalletDir                              string
 	AdWeekCents                            int
+	ContactNotify                          string
 	Coins                                  map[string]Coin
 }
 
@@ -122,6 +123,8 @@ func Load(path string) (*Config, error) {
 			if fmtSscanf > 0 {
 				c.AdWeekCents = fmtSscanf
 			}
+		case "contact_notify":
+			c.ContactNotify = v
 		default:
 			if strings.HasSuffix(k, "_key") {
 				t := strings.TrimSuffix(k, "_key")

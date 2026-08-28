@@ -71,6 +71,7 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("/pay/stripe/webhook", s.payStripeWH)
 	s.mux.HandleFunc("/pay/paypal/webhook", s.payPaypalWH)
 	s.mux.HandleFunc("/pay/crypto", s.payCryptoNote)
+	s.mux.HandleFunc("/contact", s.contact)
 	s.mux.HandleFunc("/embed.js", s.embedJS)
 	s.mux.HandleFunc("/embed.json", s.embedJSON)
 	s.mux.HandleFunc("/api/pdt/keys", s.apiPdtKeys)
