@@ -1,0 +1,153 @@
+#!/bin/bash
+# badAd installer. Same script in every package tree.
+# Destination is --webroot (or the commented default). Interactive does not ask for it.
+# Verb: --webroot /srv/www/vapps/badad.DOMAIN --config /opt/verb/conf/vapps/badad.DOMAIN.config --nginx-server-name DOMAIN
+set -euo pipefail
+
+DB_NAME=badad
+DB_USER=badad
+DB_PASS=
+DB_HOST=127.0.0.1
+WEB_URL=https://localhost
+NGINX_NAME=
+NGINX_LISTEN=80
+WEBROOT=/srv/www/badad
+ETC=/etc/badad
+CONFIG=
+PORT=9003
+INTERACTIVE=0
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --db-name) DB_NAME=$2; shift 2;;
+    --db-user) DB_USER=$2; shift 2;;
+    --db-pass) DB_PASS=$2; shift 2;;
+    --db-host) DB_HOST=$2; shift 2;;
+    --url) WEB_URL=$2; shift 2;;
+    --webroot) WEBROOT=$2; shift 2;;
+    --etc) ETC=$2; shift 2;;
+    --config) CONFIG=$2; shift 2;;
+    --port) PORT=$2; shift 2;;
+    --nginx-server-name) NGINX_NAME=$2; shift 2;;
+    --nginx-listen) NGINX_LISTEN=$2; shift 2;;
+    --interactive) INTERACTIVE=1; shift;;
+    -h|--help)
+      echo "badad-install [--webroot DIR] [--etc DIR] [--config FILE] [--db-name N] [--db-user U] [--db-pass P] [--url URL] [--nginx-server-name HOST] [--interactive]"
+      echo "  --webroot is a flag/default only. Interactive will not prompt for it."
+      echo "  Verb example: badad-install --webroot /srv/www/vapps/badad.inkisaverb.com --nginx-server-name inkisaverb.com"
+      exit 0;;
+    *) echo "unknown $1"; exit 1;;
+  esac
+done
+
+if [ "$INTERACTIVE" = "1" ]; then
+  read -rp "Database name [$DB_NAME]: " x; DB_NAME=${x:-$DB_NAME}
+  read -rp "Database user [$DB_USER]: " x; DB_USER=${x:-$DB_USER}
+  read -rsp "Database password: " DB_PASS; echo
+  read -rp "Public URL [$WEB_URL]: " x; WEB_URL=${x:-$WEB_URL}
+  read -rp "Nginx server_name (empty skip): " NGINX_NAME
+fi
+
+[ -n "$CONFIG" ] || CONFIG="$ETC/config"
+HERE=$(cd "$(dirname "$0")" && pwd)
+if [ -d "$HERE/../web" ]; then
+  APP_ROOT=$(cd "$HERE/.." && pwd)
+elif [ -d "$HERE/web" ]; then
+  APP_ROOT=$HERE
+elif [ -d /usr/share/badad/web ]; then
+  APP_ROOT=/usr/share/badad
+else
+  APP_ROOT=$HERE
+fi
+
+mkdir -p "$WEBROOT" "$ETC/wallet"
+chmod 0700 "$ETC/wallet" 2>/dev/null || true
+if [ "$WEBROOT" != "$APP_ROOT" ]; then
+  mkdir -p "$WEBROOT"
+  if [ -d "$APP_ROOT/web" ]; then cp -a "$APP_ROOT/web" "$WEBROOT/"; fi
+  if [ -d "$APP_ROOT/sql" ]; then cp -a "$APP_ROOT/sql" "$WEBROOT/"; fi
+fi
+
+if [ ! -f "$CONFIG" ]; then
+  cat > "$CONFIG" <<EOF
+web_bind=127.0.0.1
+web_port=$PORT
+web_url=$WEB_URL
+db_host=$DB_HOST
+db_port=5432
+db_name=$DB_NAME
+db_user=$DB_USER
+db_pass=$DB_PASS
+mail_transport=off
+mail_from=noreply@localhost
+wallet_dir=$ETC/wallet
+# webroot=$WEBROOT
+# Verb destination example:
+#   --webroot /srv/www/vapps/badad.example.tld
+EOF
+  chmod 0640 "$CONFIG"
+fi
+ln -sfn "$CONFIG" "$WEBROOT/config"
+ln -sfn "$CONFIG" "$ETC/config" 2>/dev/null || true
+
+if command -v psql >/dev/null && [ -n "$DB_PASS" ]; then
+  su - postgres -c "psql -c \"CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';\"" 2>/dev/null || true
+  su - postgres -c "psql -c \"CREATE DATABASE $DB_NAME OWNER $DB_USER;\"" 2>/dev/null || true
+  if [ -f "$APP_ROOT/sql/schema.sql" ]; then
+    PGPASSWORD="$DB_PASS" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -f "$APP_ROOT/sql/schema.sql" 2>/dev/null || true
+  fi
+fi
+
+NGINX_SRC=""
+for c in "$HERE/badad.conf" "$HERE/nginx/badad.conf" "$APP_ROOT/contrib/nginx/badad.conf" /usr/share/badad/nginx/badad.conf; do
+  [ -f "$c" ] && NGINX_SRC=$c && break
+done
+if [ -n "$NGINX_NAME" ] && [ -n "$NGINX_SRC" ]; then
+  conf=/etc/nginx/http.d/badad.conf
+  [ -d /etc/nginx/sites-available ] && conf=/etc/nginx/sites-available/badad
+  sed -e "s/badad.one/$NGINX_NAME/g" -e "s/example.tld/$NGINX_NAME/g" \
+      -e "s/listen 80/listen $NGINX_LISTEN/" -e "s/127.0.0.1:9003/127.0.0.1:$PORT/" "$NGINX_SRC" > "$conf"
+  [ -d /etc/nginx/sites-enabled ] && ln -sfn "$conf" /etc/nginx/sites-enabled/badad
+  nginx -t && systemctl reload nginx || true
+fi
+
+BIN=badad
+if command -v badad >/dev/null 2>&1; then
+  BIN=$(command -v badad)
+elif [ -x "$APP_ROOT/bin/badad" ]; then
+  BIN=$APP_ROOT/bin/badad
+elif [ -f "$APP_ROOT/cmd/badad/main.go" ] && command -v go >/dev/null; then
+  mkdir -p "$APP_ROOT/bin"
+  (cd "$APP_ROOT" && go build -o bin/badad ./cmd/badad)
+  BIN=$APP_ROOT/bin/badad
+fi
+
+if command -v systemctl >/dev/null && [ -d /etc/systemd/system ]; then
+  RUN_USER=nobody
+  id www >/dev/null 2>&1 && RUN_USER=www
+  id www-data >/dev/null 2>&1 && RUN_USER=www-data
+  id http >/dev/null 2>&1 && RUN_USER=http
+  cat > /etc/systemd/system/badad.service <<EOF
+[Unit]
+Description=badAd
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=$RUN_USER
+Group=$RUN_USER
+WorkingDirectory=$WEBROOT
+ExecStart=$BIN
+Restart=on-failure
+Environment=BADAD_CONFIG=$CONFIG
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  systemctl daemon-reload
+  systemctl enable --now badad.service 2>/dev/null || true
+fi
+
+echo "Config: $CONFIG"
+echo "Webroot: $WEBROOT"
+echo "Payment keys stay in the config (SysAdmin). Open $WEB_URL/"

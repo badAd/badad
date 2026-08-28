@@ -21,4 +21,5 @@ go build -o badad ./cmd/badad
 ./badad
 ```
 
-Config: `/etc/badad/config` or `config` next to the binary. PostgreSQL over TCP (`127.0.0.1`).
+Config: `/etc/badad/config` or `config` next to the binary. PostgreSQL over TCP (`127.0.0.1`). Packages: [badad-package](https://github.com/badAd/badad-package). Installer: `contrib/badad-install` (`--webroot` sets destination). Verb: `ink install badad -d domain.tld`.
+
