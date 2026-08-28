@@ -50,11 +50,47 @@ func Listen(cfg *config.Config, root string) error {
 			log.Printf("db: %v", err)
 		}
 	}
+	if cfg.ApiPort != "" {
+		m := http.NewServeMux()
+		s.mountAPI(m)
+		go func() { log.Printf("api: %v", http.ListenAndServe(cfg.AddrAPI(), m)) }()
+	}
 	return http.ListenAndServe(cfg.Addr(), s.mux)
 }
 
+func (s *Server) mountAPI(m *http.ServeMux) {
+	m.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(filepath.Join(s.root, "web/static")))))
+	m.HandleFunc("/embed.js", s.embedJS)
+	m.HandleFunc("/embed.json", s.embedJSON)
+	m.HandleFunc("/api/", s.apiPdtKeys)
+	m.HandleFunc("/api/pdt/keys", s.apiPdtKeys)
+	m.HandleFunc("/a/", s.viewAd)
+	m.HandleFunc("/pay/stripe/webhook", s.payStripeWH)
+	m.HandleFunc("/pay/paypal/webhook", s.payPaypalWH)
+	m.HandleFunc("/bimi.svg", s.bimi)
+}
+
+func (s *Server) bimi(w http.ResponseWriter, r *http.Request) {
+	for _, p := range []string{filepath.Join(s.root, "web/static/bimi.svg"), filepath.Join(s.root, "bimi.svg")} {
+		b, err := os.ReadFile(p)
+		if err == nil {
+			w.Header().Set("Content-Type", "image/svg+xml")
+			_, _ = w.Write(b)
+			return
+		}
+	}
+	http.NotFound(w, r)
+}
+
+func (s *Server) apiURL() string {
+	if s.cfg.ApiURL != "" {
+		return s.cfg.ApiURL
+	}
+	return s.cfg.URL
+}
+
 func (s *Server) routes() {
-	s.mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(filepath.Join(s.root, "web/static")))))
+	s.mountAPI(s.mux)
 	s.mux.HandleFunc("/", s.home)
 	s.mux.HandleFunc("/login", s.login)
 	s.mux.HandleFunc("/logout", s.logout)
@@ -68,14 +104,8 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("/dash/security", s.security)
 	s.mux.HandleFunc("/dash/pay", s.dashPay)
 	s.mux.HandleFunc("/pay/return", s.payReturn)
-	s.mux.HandleFunc("/pay/stripe/webhook", s.payStripeWH)
-	s.mux.HandleFunc("/pay/paypal/webhook", s.payPaypalWH)
 	s.mux.HandleFunc("/pay/crypto", s.payCryptoNote)
 	s.mux.HandleFunc("/contact", s.contact)
-	s.mux.HandleFunc("/embed.js", s.embedJS)
-	s.mux.HandleFunc("/embed.json", s.embedJSON)
-	s.mux.HandleFunc("/api/pdt/keys", s.apiPdtKeys)
-	s.mux.HandleFunc("/a/", s.viewAd)
 }
 
 func tok(n int) string {
@@ -293,7 +323,7 @@ func (s *Server) editSite(w http.ResponseWriter, r *http.Request) {
 		var n, ser string
 		var k int
 		_ = rows.Scan(&n, &ser, &k)
-		list = append(list, map[string]any{"Name": n, "Serial": ser, "N": k, "Snippet": `<script src="` + s.cfg.URL + `/embed.js?l=` + ser + `"></script>`})
+		list = append(list, map[string]any{"Name": n, "Serial": ser, "N": k, "Snippet": `<script src="` + s.apiURL() + `/embed.js?l=` + ser + `"></script>`})
 	}
 	rows.Close()
 	p["Sites"] = list
@@ -369,7 +399,7 @@ func (s *Server) embedJSON(w http.ResponseWriter, r *http.Request) {
 		var id int64
 		var h, b string
 		_ = rows.Scan(&id, &h, &b)
-		ads = append(ads, map[string]any{"id": id, "heading": h, "body": b, "url": s.cfg.URL + "/a/" + strconv.FormatInt(id, 10)})
+		ads = append(ads, map[string]any{"id": id, "heading": h, "body": b, "url": s.apiURL() + "/a/" + strconv.FormatInt(id, 10)})
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -396,7 +426,7 @@ fetch(origin+"/embed.json?n="+n).then(function(r){return r.json()}).then(functio
   });
   s.parentNode.insertBefore(box,s);
 }).catch(function(){});
-})();`, n, s.cfg.URL)
+})();`, n, s.apiURL())
 }
 
 func (s *Server) apiPdtKeys(w http.ResponseWriter, r *http.Request) {

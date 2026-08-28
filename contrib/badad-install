@@ -1,7 +1,8 @@
 #!/bin/bash
 # badAd installer. Same script in every package tree.
 # Destination is --webroot (or the commented default). Interactive does not ask for it.
-# Verb: --webroot /srv/www/vapps/badad.DOMAIN --config /opt/verb/conf/vapps/badad.DOMAIN.config --nginx-server-name DOMAIN
+# Verb: --webroot /srv/www/vapps/badad.DOMAIN --config /opt/verb/conf/vapps/badad.DOMAIN.config --nginx-server-name DOMAIN --api-url https://api.DOMAIN
+# One network per domain. API engine is the api subdomain (api.DOMAIN). Vapp folder: badad.DOMAIN.
 set -euo pipefail
 
 DB_NAME=badad
@@ -9,6 +10,7 @@ DB_USER=badad
 DB_PASS=
 DB_HOST=127.0.0.1
 WEB_URL=https://localhost
+API_URL=
 NGINX_NAME=
 NGINX_LISTEN=80
 WEBROOT=/srv/www/badad
@@ -24,6 +26,7 @@ while [ $# -gt 0 ]; do
     --db-pass) DB_PASS=$2; shift 2;;
     --db-host) DB_HOST=$2; shift 2;;
     --url) WEB_URL=$2; shift 2;;
+    --api-url) API_URL=$2; shift 2;;
     --webroot) WEBROOT=$2; shift 2;;
     --etc) ETC=$2; shift 2;;
     --config) CONFIG=$2; shift 2;;
@@ -32,9 +35,10 @@ while [ $# -gt 0 ]; do
     --nginx-listen) NGINX_LISTEN=$2; shift 2;;
     --interactive) INTERACTIVE=1; shift;;
     -h|--help)
-      echo "badad-install [--webroot DIR] [--etc DIR] [--config FILE] [--db-name N] [--db-user U] [--db-pass P] [--url URL] [--nginx-server-name HOST] [--interactive]"
+      echo "badad-install [--webroot DIR] [--etc DIR] [--config FILE] [--db-name N] [--db-user U] [--db-pass P] [--url URL] [--api-url URL] [--nginx-server-name HOST] [--interactive]"
       echo "  --webroot is a flag/default only. Interactive will not prompt for it."
-      echo "  Verb example: badad-install --webroot /srv/www/vapps/badad.inkisaverb.com --nginx-server-name inkisaverb.com"
+      echo "  Verb example: badad-install --webroot /srv/www/vapps/badad.inkisaverb.com --nginx-server-name inkisaverb.com --api-url https://api.inkisaverb.com"
+      echo "  Machine name: vapps/badad.DOMAIN. API engine: api.DOMAIN (--api-url)."
       exit 0;;
     *) echo "unknown $1"; exit 1;;
   esac
@@ -73,6 +77,9 @@ if [ ! -f "$CONFIG" ]; then
 web_bind=127.0.0.1
 web_port=$PORT
 web_url=$WEB_URL
+api_bind=127.0.0.1
+api_port=9004
+api_url=$API_URL
 db_host=$DB_HOST
 db_port=5432
 db_name=$DB_NAME

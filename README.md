@@ -2,6 +2,8 @@
 
 Classified text ads. **PHP 2017 lives on the `phpinitial` branch.** This `golang` branch is the rewrite.
 
+One network per domain (dedicated-server scale). `api.DOMAIN` is the API engine; the Verb machine name is `vapps/badad.DOMAIN`.
+
 Login: password, Google, Apple, GitHub, **Login with pdt**. Authenticator still applies when enabled. Developer keys mint automatically when a pdt-news account is linked; otherwise they are shown in the dash for WordPress / custom apps.
 
 Payments match pdt-news:

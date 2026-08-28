@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	Bind, Port, URL                        string
+	ApiBind, ApiPort, ApiURL               string
 	DBHost, DBPort, DBName, DBUser, DBPass string
 	GoogleID, GoogleSecret                 string
 	AppleID, AppleSecret                   string
@@ -69,6 +70,12 @@ func Load(path string) (*Config, error) {
 			c.Port = v
 		case "web_url":
 			c.URL = strings.TrimRight(v, "/")
+		case "api_bind":
+			c.ApiBind = v
+		case "api_port":
+			c.ApiPort = v
+		case "api_url":
+			c.ApiURL = strings.TrimRight(v, "/")
 		case "db_host":
 			c.DBHost = v
 		case "db_port":
@@ -140,11 +147,21 @@ func Load(path string) (*Config, error) {
 			}
 		}
 	}
+	if c.ApiBind == "" {
+		c.ApiBind = c.Bind
+	}
 	return c, nil
 }
 
 func (c *Config) Addr() string {
 	return c.Bind + ":" + c.Port
+}
+
+func (c *Config) AddrAPI() string {
+	if c.ApiPort == "" {
+		return ""
+	}
+	return c.ApiBind + ":" + c.ApiPort
 }
 
 func (c *Config) DSN() string {
